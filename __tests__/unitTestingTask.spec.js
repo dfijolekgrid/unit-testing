@@ -2,12 +2,7 @@ const unitTestingTask = require("../unitTestingTask.js");
 
 describe("test unitTestingTask", () => {
   const date = new Date("2022", "05", "22", "02", "18", "20", "20");
-  console.log(
-    unitTestingTask(
-      "YYYY YY MMMM MMM MM M DDD DD D dd d HH H hh h mm m ss s ff f A a ZZ Z",
-      date
-    )
-  );
+
   it("test if unitTestingTask is function", () => {
     expect(typeof unitTestingTask).toBe("function");
   });
