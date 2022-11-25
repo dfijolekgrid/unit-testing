@@ -1,123 +1,184 @@
 const unitTestingTask = require("../unitTestingTask.js");
+const setupMockDate = require("../test-utils");
+
+let mockDate;
+beforeEach(() => {
+    mockDate = setupMockDate.setupMockDate();
+});
+
+afterEach(() => {
+    mockDate.reset();
+});
+
+const offset = 0;
+
+const isoDate = "2022-06-22T02:18:20.020Z";
+const isoDate22 = "2022-06-22T22:18:20.020Z";
+
+const testingObject = [
+    {
+        format: "YYYY",
+        expected: "2022",
+    },
+    {
+        format: "YY",
+        expected: "22",
+    },
+    {
+        format: "MMMM",
+        expected: "June",
+    },
+    {
+        format: "MMM",
+        expected: "Jun",
+    },
+    {
+        format: "MM",
+        expected: "06",
+    },
+    {
+        format: "M",
+        expected: "6",
+    },
+    {
+        format: "DDD",
+        expected: "Wednesday",
+    },
+    {
+        format: "DD",
+        expected: "Wed",
+    },
+    {
+        format: "D",
+        expected: "We",
+    },
+    {
+        format: "dd",
+        expected: "22",
+    },
+    {
+        format: "d",
+        expected: "22",
+    },
+    {
+        format: "HH",
+        expected: "02",
+    },
+    {
+        format: "H",
+        expected: "2",
+    },
+    {
+        format: "hh",
+        expected: "02",
+    },
+    {
+        format: "h",
+        expected: "2",
+    },
+    {
+        format: "mm",
+        expected: "18",
+    },
+    {
+        format: "m",
+        expected: "18",
+    },
+    {
+        format: "ss",
+        expected: "20",
+    },
+    {
+        format: "s",
+        expected: "20",
+    },
+    {
+        format: "ff",
+        expected: "020",
+    },
+    {
+        format: "f",
+        expected: "20",
+    },
+    {
+        format: "A",
+        expected: "AM",
+    },
+    {
+        format: "a",
+        expected: "am",
+    },
+    {
+        format: "ZZ",
+        expected: "+0000",
+    },
+];
+
+const formaters = [
+    {
+        format: "ISODate",
+        expected: "2022-06-22",
+    },
+    {
+        format: "ISOTime",
+        expected: "02:18:20",
+    },
+    {
+        format: "ISODateTime",
+        expected: "2022-06-22T02:18:20",
+    },
+    {
+        format: "ISODateTimeTZ",
+        expected: "2022-06-22T02:18:20+00:00",
+    },
+];
 
 describe("test unitTestingTask", () => {
-  const date = new Date("2022", "05", "22", "02", "18", "20", "20");
+    test.each(testingObject)("Test $format format", ({ format, expected }) => {
+        mockDate.set({ offset, isoDate });
+        const date = new Date();
+        expect(unitTestingTask(format, date)).toBe(expected);
+    });
 
-  it("test if unitTestingTask is function", () => {
-    expect(typeof unitTestingTask).toBe("function");
-  });
+    test.each(formaters)("Test fromater: $format", ({ format, expected }) => {
+        mockDate.set({ offset, isoDate });
+        const date = new Date();
+        expect(unitTestingTask(unitTestingTask._formatters[format](date))).toBe(
+            expected
+        );
+    });
 
-  it("Test YYYY format", () => {
-    expect(unitTestingTask("YYYY", date)).toBe("2022");
-  });
+    it("Test format A for hour > 11", () => {
+        mockDate.set({ offset, isoDate: isoDate22 });
+        const date = new Date();
+        expect(unitTestingTask("A", date)).toBe("PM");
+    });
 
-  it("Test YY format", () => {
-    expect(unitTestingTask("YY", date)).toBe("22");
-  });
+    it("Test format a for hour > 11", () => {
+        mockDate.set({ offset, isoDate: isoDate22 });
+        const date = new Date();
+        expect(unitTestingTask("a", date)).toBe("pm");
+    });
 
-  it("Test MMMM format", () => {
-    expect(unitTestingTask("MMMM", date)).toBe("June");
-  });
+    it("Test Error of first arg", () => {
+        mockDate.set({ offset, isoDate });
+        const date = new Date();
+        expect(() => unitTestingTask(2, date)).toThrow(
+            new Error("Argument `format` must be a string")
+        );
+    });
 
-  it("Test MMM format", () => {
-    expect(unitTestingTask("MMM", date)).toBe("Jun");
-  });
+    it("Test Error of second arg", () => {
+        mockDate.set({ offset, isoDate });
+        const date = new Date();
+        expect(() => unitTestingTask("dd", null)).toThrow(
+            new Error(
+                "Argument `date` must be instance of Date or Unix Timestamp or ISODate String"
+            )
+        );
+    });
 
-  it("Test MM format", () => {
-    expect(unitTestingTask("MM", date)).toBe("06");
-  });
-
-  it("Test M format", () => {
-    expect(unitTestingTask("M", date)).toBe("6");
-  });
-
-  it("Test DDD format", () => {
-    expect(unitTestingTask("DDD", date)).toBe("Wednesday");
-  });
-
-  it("Test DD format", () => {
-    expect(unitTestingTask("DD", date)).toBe("Wed");
-  });
-
-  it("Test D format", () => {
-    expect(unitTestingTask("D", date)).toBe("We");
-  });
-
-  it("Test dd format", () => {
-    expect(unitTestingTask("dd", date)).toBe("22");
-  });
-
-  it("Test d format", () => {
-    expect(unitTestingTask("d", date)).toBe("22");
-  });
-
-  it("Test HH format", () => {
-    expect(unitTestingTask("HH", date)).toBe("02");
-  });
-
-  it("Test H format", () => {
-    expect(unitTestingTask("H", date)).toBe("2");
-  });
-
-  it("Test hh format", () => {
-    expect(unitTestingTask("hh", date)).toBe("02");
-  });
-
-  it("Test h format", () => {
-    expect(unitTestingTask("h", date)).toBe("2");
-  });
-
-  it("Test mm format", () => {
-    expect(unitTestingTask("mm", date)).toBe("18");
-  });
-
-  it("Test m format", () => {
-    expect(unitTestingTask("m", date)).toBe("18");
-  });
-
-  it("Test ss format", () => {
-    expect(unitTestingTask("ss", date)).toBe("20");
-  });
-
-  it("Test s format", () => {
-    expect(unitTestingTask("s", date)).toBe("20");
-  });
-
-  it("Test ff format", () => {
-    expect(unitTestingTask("ff", date)).toBe("020");
-  });
-
-  it("Test f format", () => {
-    expect(unitTestingTask("f", date)).toBe("20");
-  });
-
-  it("Test A format", () => {
-    expect(unitTestingTask("A", date)).toBe("AM");
-  });
-
-  it("Test a format", () => {
-    expect(unitTestingTask("a", date)).toBe("am");
-  });
-
-  it("Test ZZ format", () => {
-    expect(unitTestingTask("ZZ", date)).toBe("+0200");
-  });
-
-  it("Test Z format", () => {
-    expect(unitTestingTask("Z", date)).toBe("+02:00");
-  });
-
-  it("Test Error of first arg", () => {
-    expect(() => unitTestingTask(2, date)).toThrow(
-      new Error("Argument `format` must be a string")
-    );
-  });
-
-  it("Test Error of second arg", () => {
-    expect(() => unitTestingTask("dd", null)).toThrow(
-      new Error(
-        "Argument `date` must be instance of Date or Unix Timestamp or ISODate String"
-      )
-    );
-  });
+    it("Test if lang function with en", () => {
+        expect(unitTestingTask.lang("en")).toBe("en");
+    });
 });
