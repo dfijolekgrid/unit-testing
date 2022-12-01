@@ -15,169 +15,48 @@ const offset = 0;
 const isoDate = "2022-06-22T02:18:20.020Z";
 const isoDatePM = "2022-06-22T22:18:20.020Z";
 
-const testingObject = [
-    {
-        format: "YYYY",
-        expected: "2022",
-        isoDate,
-    },
-    {
-        format: "YY",
-        expected: "22",
-        isoDate,
-    },
-    {
-        format: "MMMM",
-        expected: "June",
-        isoDate,
-    },
-    {
-        format: "MMM",
-        expected: "Jun",
-        isoDate,
-    },
-    {
-        format: "MM",
-        expected: "06",
-        isoDate,
-    },
-    {
-        format: "M",
-        expected: "6",
-        isoDate,
-    },
-    {
-        format: "DDD",
-        expected: "Wednesday",
-        isoDate,
-    },
-    {
-        format: "DD",
-        expected: "Wed",
-        isoDate,
-    },
-    {
-        format: "D",
-        expected: "We",
-        isoDate,
-    },
-    {
-        format: "dd",
-        expected: "22",
-        isoDate,
-    },
-    {
-        format: "d",
-        expected: "22",
-        isoDate,
-    },
-    {
-        format: "HH",
-        expected: "02",
-        isoDate,
-    },
-    {
-        format: "H",
-        expected: "2",
-        isoDate,
-    },
-    {
-        format: "hh",
-        expected: "02",
-        isoDate,
-    },
-    {
-        format: "h",
-        expected: "2",
-        isoDate,
-    },
-    {
-        format: "mm",
-        expected: "18",
-        isoDate,
-    },
-    {
-        format: "m",
-        expected: "18",
-        isoDate,
-    },
-    {
-        format: "ss",
-        expected: "20",
-        isoDate,
-    },
-    {
-        format: "s",
-        expected: "20",
-        isoDate,
-    },
-    {
-        format: "ff",
-        expected: "020",
-        isoDate,
-    },
-    {
-        format: "f",
-        expected: "20",
-        isoDate,
-    },
-    {
-        format: "A",
-        expected: "AM",
-        isoDate,
-    },
-    {
-        format: "a",
-        expected: "am",
-        isoDate,
-    },
-    {
-        format: "A",
-        expected: "PM",
-        isoDate: isoDatePM,
-    },
-    {
-        format: "a",
-        expected: "pm",
-        isoDate: isoDatePM,
-    },
-    {
-        format: "ZZ",
-        expected: "+0000",
-        isoDate,
-    },
-];
-
-const formaters = [
-    {
-        format: "ISODate",
-        expected: "2022-06-22",
-    },
-    {
-        format: "ISOTime",
-        expected: "02:18:20",
-    },
-    {
-        format: "ISODateTime",
-        expected: "2022-06-22T02:18:20",
-    },
-    {
-        format: "ISODateTimeTZ",
-        expected: "2022-06-22T02:18:20+00:00",
-    },
-];
-
 describe("test unitTestingTask", () => {
-    test.each(testingObject)(
-        "Test $format format for $isoDate",
-        ({ format, isoDate, expected }) => {
-            mockDate.set({ offset, isoDate });
-            const date = new Date();
-            expect(unitTestingTask(format, date)).toBe(expected);
-        }
-    );
+    it.each`
+        format    | isoDate      | expected
+        ${"YYYY"} | ${isoDate}   | ${"2022"}
+        ${"YY"}   | ${isoDate}   | ${"22"}
+        ${"MMMM"} | ${isoDate}   | ${"June"}
+        ${"MMM"}  | ${isoDate}   | ${"Jun"}
+        ${"MM"}   | ${isoDate}   | ${"06"}
+        ${"M"}    | ${isoDate}   | ${"6"}
+        ${"DDD"}  | ${isoDate}   | ${"Wednesday"}
+        ${"DD"}   | ${isoDate}   | ${"Wed"}
+        ${"D"}    | ${isoDate}   | ${"We"}
+        ${"dd"}   | ${isoDate}   | ${"22"}
+        ${"d"}    | ${isoDate}   | ${"22"}
+        ${"HH"}   | ${isoDate}   | ${"02"}
+        ${"H"}    | ${isoDate}   | ${"2"}
+        ${"hh"}   | ${isoDate}   | ${"02"}
+        ${"h"}    | ${isoDate}   | ${"2"}
+        ${"mm"}   | ${isoDate}   | ${"18"}
+        ${"m"}    | ${isoDate}   | ${"18"}
+        ${"ss"}   | ${isoDate}   | ${"20"}
+        ${"s"}    | ${isoDate}   | ${"20"}
+        ${"ff"}   | ${isoDate}   | ${"020"}
+        ${"f"}    | ${isoDate}   | ${"20"}
+        ${"A"}    | ${isoDate}   | ${"AM"}
+        ${"a"}    | ${isoDate}   | ${"am"}
+        ${"A"}    | ${isoDatePM} | ${"PM"}
+        ${"a"}    | ${isoDatePM} | ${"pm"}
+        ${"ZZ"}   | ${isoDate}   | ${"+0000"}
+    `("Test $format format for $isoDate", ({ format, isoDate, expected }) => {
+        mockDate.set({ offset, isoDate });
+        const date = new Date();
+        expect(unitTestingTask(format, date)).toBe(expected);
+    });
 
-    test.each(formaters)("Test fromater: $format", ({ format, expected }) => {
+    it.each`
+        format             | expected
+        ${"ISODate"}       | ${"2022-06-22"}
+        ${"ISOTime"}       | ${"02:18:20"}
+        ${"ISODateTime"}   | ${"2022-06-22T02:18:20"}
+        ${"ISODateTimeTZ"} | ${"2022-06-22T02:18:20+00:00"}
+    `("Test fromater: $format", ({ format, expected }) => {
         mockDate.set({ offset, isoDate });
         const date = new Date();
         expect(unitTestingTask(unitTestingTask._formatters[format](date))).toBe(
