@@ -17,13 +17,9 @@ function setupMockDate() {
             return MockDate;
         };
 
-        if (offset !== undefined) {
-            Date = timezonedDate.makeConstructor(offset);
-        }
+        Date = timezonedDate.makeConstructor(offset);
 
-        if (isoDate !== undefined) {
-            getMockDate().set(isoDate);
-        }
+        getMockDate().set(isoDate);
     }
 
     return { reset, set };
