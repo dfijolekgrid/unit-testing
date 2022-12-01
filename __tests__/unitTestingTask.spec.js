@@ -13,7 +13,7 @@ afterEach(() => {
 const offset = 0;
 
 const isoDate = "2022-06-22T02:18:20.020Z";
-const isoDate22 = "2022-06-22T22:18:20.020Z";
+const isoDatePM = "2022-06-22T22:18:20.020Z";
 
 const testingObject = [
     {
@@ -134,12 +134,12 @@ const testingObject = [
     {
         format: "A",
         expected: "PM",
-        isoDate: isoDate22,
+        isoDate: isoDatePM,
     },
     {
         format: "a",
         expected: "pm",
-        isoDate: isoDate22,
+        isoDate: isoDatePM,
     },
     {
         format: "ZZ",
@@ -191,6 +191,20 @@ describe("test unitTestingTask", () => {
         expect(() => unitTestingTask(2, date)).toThrow(
             new Error("Argument `format` must be a string")
         );
+    });
+
+    it("Test pass of ms", () => {
+        jest.useFakeTimers();
+        mockDate.set({ offset, isoDate });
+        let date = new Date();
+        jest.setSystemTime(date);
+
+        expect(unitTestingTask("f", date)).toBe("20");
+
+        setTimeout(() => {}, 150);
+        jest.runAllTimers();
+
+        expect(unitTestingTask("f", jest.now())).toBe("170");
     });
 
     it("Test Error of second arg", () => {
